@@ -1,0 +1,10 @@
+name: dependency_visitor_example
+description: Example of dependency_visitor
+version: 0.1.0
+
+environment:
+  sdk: '>=2.8.1 <3.0.0'
+
+dependencies:
+  dependency_visitor:
+    path: ../
