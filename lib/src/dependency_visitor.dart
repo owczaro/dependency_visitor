@@ -46,9 +46,9 @@ class DependencyVisitor {
     @required this.filePath,
     this.includeRoot = true,
     this.dependencyTypes = DependencyType.values,
-  })  : assert(filePath != null || filePath.length > 0),
+  })  : assert(filePath != null || filePath.isNotEmpty),
         assert(includeRoot != null),
-        assert(dependencyTypes != null || dependencyTypes.length > 0);
+        assert(dependencyTypes != null || dependencyTypes.isNotEmpty);
 
   /// Search file and read its content.
   Stream<DependencyFile> run() async* {
