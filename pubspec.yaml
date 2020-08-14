@@ -1,6 +1,6 @@
 name: dependency_visitor
 description: Visits root package, transitive and immediate dependencies in order to search given file.
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/owczaro/dependency_visitor
 
 environment:

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'package:path/path.dart' as p;
 import 'package:meta/meta.dart';
 import 'package:pubspec_lock/pubspec_lock.dart';
@@ -105,7 +105,7 @@ class DependencyVisitor {
     }
   }
 
-  bool _isNotEmpty(String content) => content != null && content.length > 0;
+  bool _isNotEmpty(String content) => content != null && content.isNotEmpty;
 
   Future<String> get _rootPackageName async => readYamlFileFromRoot()['name'];
 }
