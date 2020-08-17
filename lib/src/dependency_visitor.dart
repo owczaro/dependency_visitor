@@ -15,7 +15,7 @@ import 'services/pub_cache_service.dart';
 /// Typical usage is as follows:
 ///
 /// ```dart
-///  DependencyVisitor(filePath: 'path to file or file name')
+///  DependencyVisitor(filePaths: ['path to file or file name'])
 ///    .run().listen((dependencyFile) {
 ///      // Do smth with dependencyFile.packageName and dependencyFile.content
 ///    }).onDone(() {
@@ -24,7 +24,7 @@ import 'services/pub_cache_service.dart';
 /// ```
 class DependencyVisitor {
   /// Path to file and its name.
-  final String filePath;
+  final List<String> filePaths;
 
   /// Whether search in root package or not.
   final bool includeRoot;
@@ -43,10 +43,10 @@ class DependencyVisitor {
 
   /// Creates an instance of [DependencyVisitor]
   DependencyVisitor({
-    @required this.filePath,
+    @required this.filePaths,
     this.includeRoot = true,
     this.dependencyTypes = DependencyType.values,
-  })  : assert(filePath != null || filePath.isNotEmpty),
+  })  : assert(filePaths != null || filePaths.isNotEmpty),
         assert(includeRoot != null),
         assert(dependencyTypes != null || dependencyTypes.isNotEmpty);
 
@@ -60,12 +60,14 @@ class DependencyVisitor {
   }
 
   Stream<DependencyFile> _searchAndReadInRoot() async* {
-    var content = await readFileAsString(filePath);
-    if (_isNotEmpty(content)) {
-      yield DependencyFile(
-        packageName: await _rootPackageName,
-        content: content,
-      );
+    for (var filePath in filePaths) {
+      var content = await readFileAsString(filePath);
+      if (_isNotEmpty(content)) {
+        yield DependencyFile(
+          packageName: await _rootPackageName,
+          content: content,
+        );
+      }
     }
   }
 
@@ -93,14 +95,16 @@ class DependencyVisitor {
             absolutePath = '${Directory.current.absolute.path}/${d.path}',
       );
 
-      final _content =
-          await readFileAsString(p.normalize('$absolutePath/$filePath'));
+      for (var filePath in filePaths) {
+        final _content =
+            await readFileAsString(p.normalize('$absolutePath/$filePath'));
 
-      if (_isNotEmpty(_content)) {
-        yield DependencyFile(
-          packageName: package.package(),
-          content: _content,
-        );
+        if (_isNotEmpty(_content)) {
+          yield DependencyFile(
+            packageName: package.package(),
+            content: _content,
+          );
+        }
       }
     }
   }

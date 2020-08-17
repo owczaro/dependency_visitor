@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 void main() {
   group('PubCacheService', () {
     test('Test responses', () async {
-      var stream = DependencyVisitor(filePath: 'LICENSE').run();
+      var stream = DependencyVisitor(filePaths: ['LICENSE']).run();
       stream.forEach((element) {
         expect(element.packageName, hasLength(greaterThan(0)));
         expect(element.content, hasLength(greaterThan(0)));
