@@ -1,3 +1,7 @@
+## [0.1.5] - 31th of August 2020
+
+- DependencyVisitor: remove deprecated field: `includeRoot`
+
 ## [0.1.4] - 31th of August 2020
 
 - DependencyVisitor: add ability to define search order (get order from the `dependencyTypes` field)

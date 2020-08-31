@@ -25,12 +25,6 @@ class DependencyVisitor {
   /// Path to file and its name.
   final List<String> filePaths;
 
-  /// Whether search in root package or not.
-  @Deprecated('Since v.0.1.4 prefer to use '
-      '`DependencyType.root` in the `dependencyTypes` field. '
-      'This will be removed in v.0.1.5')
-  final bool includeRoot;
-
   /// Which dependencies should be consider:
   /// * root package
   /// * direct
@@ -49,7 +43,6 @@ class DependencyVisitor {
   /// Creates an instance of [DependencyVisitor]
   DependencyVisitor({
     @required this.filePaths,
-    this.includeRoot = true,
     this.dependencyTypes = const [
       DependencyType.development,
       DependencyType.transitive,
@@ -57,13 +50,12 @@ class DependencyVisitor {
       DependencyType.root,
     ],
   })  : assert(filePaths != null || filePaths.isNotEmpty),
-        assert(includeRoot != null),
         assert(dependencyTypes != null || dependencyTypes.isNotEmpty);
 
   /// Search file and read its content.
   Stream<DependencyFile> run() async* {
     for (final dependencyType in dependencyTypes) {
-      if (includeRoot == true && dependencyType == DependencyType.root) {
+      if (dependencyType == DependencyType.root) {
         yield* _searchAndReadInRoot();
       } else {
         for (final package in _packagesForDependencyType(dependencyType)) {

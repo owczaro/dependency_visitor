@@ -18,21 +18,6 @@ void main() {
       });
     });
 
-    test('Does not include root - deprecated', () async {
-      final thisPackageLicenseAbsolutePath =
-          p.normalize('${Directory.current.absolute.path}/LICENSE');
-
-      await DependencyVisitor(filePaths: ['LICENSE'], includeRoot: false)
-          .run()
-          .forEach((dependencyFile) {
-        expect(dependencyFile.packageName, hasLength(greaterThan(0)));
-        expect(dependencyFile.content, hasLength(greaterThan(0)));
-        expect(dependencyFile.absolutePath, hasLength(greaterThan(0)));
-        expect(
-            dependencyFile.absolutePath, isNot(thisPackageLicenseAbsolutePath));
-      });
-    });
-
     test('Does not include root', () async {
       final thisPackageLicenseAbsolutePath =
           p.normalize('${Directory.current.absolute.path}/LICENSE');
