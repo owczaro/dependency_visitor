@@ -7,7 +7,7 @@
 
 # DependencyVisitor
 
-Visits root package, transitive and immediate dependencies in order to search given file.
+Visits root package, transitive and immediate dependencies in order to search given files.
 
 
 ## Implementation

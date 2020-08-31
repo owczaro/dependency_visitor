@@ -1,15 +1,14 @@
-import 'package:universal_io/io.dart';
-import 'package:path/path.dart' as p;
 import 'package:meta/meta.dart';
-import 'package:pubspec_lock/pubspec_lock.dart';
-// ignore: implementation_imports
-import 'package:pubspec_lock/src/package_dependency/dependency_type/definition.dart';
-import 'services/file_utils.dart';
+import 'package:path/path.dart' as p;
+import 'package:pubspec_lock/pubspec_lock.dart' hide DependencyType;
+import 'package:universal_io/io.dart';
 import 'models/dependency_file.dart';
+import 'models/enums/dependency_type.dart';
+import 'services/file_utils.dart';
 import 'services/pub_cache_service.dart';
 
 /// Visits root package, transitive and immediate dependencies
-/// in order to search given file.
+/// in order to search given files.
 ///
 ///
 /// Typical usage is as follows:
@@ -27,13 +26,19 @@ class DependencyVisitor {
   final List<String> filePaths;
 
   /// Whether search in root package or not.
+  @Deprecated('Since v.0.1.4 prefer to use '
+      '`DependencyType.root` in the `dependencyTypes` field. '
+      'This will be removed in v.0.1.5')
   final bool includeRoot;
 
   /// Which dependencies should be consider:
+  /// * root package
   /// * direct
   /// * direct dev
   /// * transitive
   /// * all of above
+  ///
+  /// This field also defines search order.
   final List<DependencyType> dependencyTypes;
 
   final _pubCacheService = PubCacheService();
@@ -45,18 +50,33 @@ class DependencyVisitor {
   DependencyVisitor({
     @required this.filePaths,
     this.includeRoot = true,
-    this.dependencyTypes = DependencyType.values,
+    this.dependencyTypes = const [
+      DependencyType.development,
+      DependencyType.transitive,
+      DependencyType.direct,
+      DependencyType.root,
+    ],
   })  : assert(filePaths != null || filePaths.isNotEmpty),
         assert(includeRoot != null),
         assert(dependencyTypes != null || dependencyTypes.isNotEmpty);
 
   /// Search file and read its content.
   Stream<DependencyFile> run() async* {
-    if (includeRoot) {
-      yield* _searchAndReadInRoot();
+    for (final dependencyType in dependencyTypes) {
+      if (includeRoot == true && dependencyType == DependencyType.root) {
+        yield* _searchAndReadInRoot();
+      } else {
+        for (final package in _packagesForDependencyType(dependencyType)) {
+          yield* _searchAndReadDependencies(package);
+        }
+      }
     }
+  }
 
-    yield* _searchAndReadDependencies();
+  Iterable<PackageDependency> _packagesForDependencyType(
+      DependencyType dependencyType) {
+    return _pubspecLock.packages
+        .where((p) => dependencyType.toString() == p.type().toString());
   }
 
   Stream<DependencyFile> _searchAndReadInRoot() async* {
@@ -66,45 +86,43 @@ class DependencyVisitor {
         yield DependencyFile(
           packageName: await _rootPackageName,
           content: content,
+          absolutePath:
+              p.normalize('${Directory.current.absolute.path}/$filePath'),
         );
       }
     }
   }
 
-  Stream<DependencyFile> _searchAndReadDependencies() async* {
-    for (final package in _pubspecLock.packages) {
-      if (!dependencyTypes.contains(package.type())) {
-        continue;
-      }
-
-      var absolutePath;
-      package.iswitch(
-        sdk: (_) => null,
-        hosted: (d) => absolutePath =
-            '${_pubCacheService.defaultPath}/hosted/pub.dartlang.org/'
-                '${d.package}-${d.version}',
-        git: (d) {
-          absolutePath = '${_pubCacheService.defaultPath}/git/'
+  Stream<DependencyFile> _searchAndReadDependencies(
+      PackageDependency package) async* {
+    var absolutePath;
+    package.iswitch(
+      sdk: (_) => null,
+      hosted: (d) => absolutePath =
+          '${_pubCacheService.defaultPath}/hosted/pub.dartlang.org/'
+              '${d.package}-${d.version}',
+      git: (d) {
+        absolutePath = '${_pubCacheService.defaultPath}/git/'
+            '${d.package}-${d.resolvedRef}';
+        if (!Directory(absolutePath).absolute.existsSync()) {
+          absolutePath = '${_pubCacheService.defaultPath}/git/cache/'
               '${d.package}-${d.resolvedRef}';
-          if (!Directory(absolutePath).absolute.existsSync()) {
-            absolutePath = '${_pubCacheService.defaultPath}/git/cache/'
-                '${d.package}-${d.resolvedRef}';
-          }
-        },
-        path: (d) =>
-            absolutePath = '${Directory.current.absolute.path}/${d.path}',
-      );
-
-      for (var filePath in filePaths) {
-        final _content =
-            await readFileAsString(p.normalize('$absolutePath/$filePath'));
-
-        if (_isNotEmpty(_content)) {
-          yield DependencyFile(
-            packageName: package.package(),
-            content: _content,
-          );
         }
+      },
+      path: (d) =>
+          absolutePath = '${Directory.current.absolute.path}/${d.path}',
+    );
+
+    for (var filePath in filePaths) {
+      final _content =
+          await readFileAsString(p.normalize('$absolutePath/$filePath'));
+
+      if (_isNotEmpty(_content)) {
+        yield DependencyFile(
+          packageName: package.package(),
+          content: _content,
+          absolutePath: p.normalize('$absolutePath/$filePath'),
+        );
       }
     }
   }
