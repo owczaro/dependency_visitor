@@ -9,6 +9,7 @@ void main() {
     dependencyFile = DependencyFile(
       packageName: 'package-name',
       content: 'Some content',
+      absolutePath: 'Absolute path',
     );
   });
   group('[Models] DependencyFile', () {

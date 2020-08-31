@@ -1,3 +1,9 @@
+## [0.1.4] - 31th of August 2020
+
+- DependencyVisitor: add ability to define search order (get order from the `dependencyTypes` field)
+- DependencyType: new value: `DependencyType.root`
+- DependencyFile: new field: `absolutePath`
+
 ## [0.1.3] - 17th of August 2020
 
 - Add ability to search multiple files
