@@ -1,3 +1,8 @@
+## [1.0.0] - 23th of March 2021
+
+- Null safety support
+- Upgrade dependencies
+
 ## [0.1.5] - 31th of August 2020
 
 - DependencyVisitor: remove deprecated field: `includeRoot`

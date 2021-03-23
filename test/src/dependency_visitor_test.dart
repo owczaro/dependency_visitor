@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 import 'package:dependency_visitor/dependency_visitor.dart';
+import 'package:pubspec_lock_reader/pubspec_lock_reader.dart';
 import 'package:test/test.dart';
 
 /// Tests [DependencyVisitor]
