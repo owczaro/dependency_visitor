@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 /// Keeps info about founded file.
 class DependencyFile extends Equatable {
@@ -14,9 +13,9 @@ class DependencyFile extends Equatable {
 
   /// Creates an instance of [DependencyFile]
   const DependencyFile({
-    @required this.packageName,
-    @required this.content,
-    @required this.absolutePath,
+    required this.packageName,
+    required this.content,
+    required this.absolutePath,
   });
 
   @override

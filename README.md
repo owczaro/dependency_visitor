@@ -1,6 +1,6 @@
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License: MIT"></a>
 <a href="https://github.com/tenhobi/effective_dart"><img src="https://img.shields.io/badge/style-effective_dart-blue.svg" alt="style: effective dart"></a>
-<a href="https://travis-ci.org/github/owczaro/dependency_visitor"><img src="https://travis-ci.org/owczaro/dependency_visitor.svg?branch=master" alt="Travis CI"></a>
+<a href="https://travis-ci.com/github/owczaro/dependency_visitor"><img src="https://travis-ci.com/owczaro/dependency_visitor.svg?branch=master" alt="Travis CI"></a>
 
 ---
 

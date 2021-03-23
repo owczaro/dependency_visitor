@@ -4,14 +4,12 @@ import 'package:test/test.dart';
 /// Tests [DependencyFile]
 
 void main() {
-  DependencyFile dependencyFile;
-  setUpAll(() {
-    dependencyFile = DependencyFile(
-      packageName: 'package-name',
-      content: 'Some content',
-      absolutePath: 'Absolute path',
-    );
-  });
+  final dependencyFile = DependencyFile(
+    packageName: 'package-name',
+    content: 'Some content',
+    absolutePath: 'Absolute path',
+  );
+
   group('[Models] DependencyFile', () {
     test('Test type', () {
       expect(dependencyFile, isA<DependencyFile>());

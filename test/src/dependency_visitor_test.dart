@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 import 'package:dependency_visitor/dependency_visitor.dart';
+import 'package:pubspec_lock_reader/pubspec_lock_reader.dart';
 import 'package:test/test.dart';
 
 /// Tests [DependencyVisitor]
@@ -15,21 +16,6 @@ void main() {
         expect(dependencyFile.packageName, hasLength(greaterThan(0)));
         expect(dependencyFile.content, hasLength(greaterThan(0)));
         expect(dependencyFile.absolutePath, hasLength(greaterThan(0)));
-      });
-    });
-
-    test('Does not include root - deprecated', () async {
-      final thisPackageLicenseAbsolutePath =
-          p.normalize('${Directory.current.absolute.path}/LICENSE');
-
-      await DependencyVisitor(filePaths: ['LICENSE'], includeRoot: false)
-          .run()
-          .forEach((dependencyFile) {
-        expect(dependencyFile.packageName, hasLength(greaterThan(0)));
-        expect(dependencyFile.content, hasLength(greaterThan(0)));
-        expect(dependencyFile.absolutePath, hasLength(greaterThan(0)));
-        expect(
-            dependencyFile.absolutePath, isNot(thisPackageLicenseAbsolutePath));
       });
     });
 

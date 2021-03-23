@@ -3,11 +3,11 @@ import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
 /// Load content of yaml file from root dir
-YamlMap readYamlFileFromRoot({
+YamlMap? readYamlFileFromRoot({
   String fileName = 'pubspec.yaml',
 }) {
   try {
-    final fileContent = File(fileName)?.readAsStringSync();
+    final fileContent = File(fileName).readAsStringSync();
     return loadYaml(fileContent);
   } on FileSystemException catch (_) {
     return null;
@@ -15,7 +15,7 @@ YamlMap readYamlFileFromRoot({
 }
 
 ///Reads file asynchronously.
-Future<String> readFileAsString(String path) async {
+Future<String?> readFileAsString(String path) async {
   try {
     path = p.normalize(path);
     final file = File(path).absolute;
